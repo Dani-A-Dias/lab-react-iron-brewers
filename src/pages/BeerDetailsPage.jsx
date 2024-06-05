@@ -1,11 +1,13 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import beersJSON from "./../assets/beers.json";
+import axios from 'axios';
 
 
 function BeerDetailsPage() {
   // Mock initial state, to be replaced by data from the Beers API. Store the beer info retrieved from the Beers API in this state variable.
   const [beer, setBeer] = useState(beersJSON[0]);
+  const {beerId} = useParams();
 
   // React Router hook for navigation. We use it for the back button. You can leave this as it is.
   const navigate = useNavigate();
@@ -17,6 +19,19 @@ function BeerDetailsPage() {
   // 2. Set up an effect hook to make a request for the beer info from the Beers API.
   // 3. Use axios to make a HTTP request.
   // 4. Use the response data from the Beers API to update the state variable.
+  useEffect(()=>{
+    const fetchBeerData = async () => {
+			try {
+				const { data } = await axios.get(`https://ih-beers-api2.herokuapp.com/beers/${beerId}`);
+				setBeer(data)
+        console.log("the one beer",data);
+			} catch (error) {
+				console.log(error);
+			}
+		};
+		fetchBeerData();
+	}, [beerId]);
+
 
 
 
@@ -26,7 +41,7 @@ function BeerDetailsPage() {
       {beer && (
         <>
           <img
-            src={beer.image_url}
+            src={"https://m.media-amazon.com/images/I/81m1tJ5ePFL._AC_UF894,1000_QL80_.jpg"}
             alt="Beer Image"
             height="300px"
             width="auto"
@@ -36,7 +51,7 @@ function BeerDetailsPage() {
           <p>Attenuation level: {beer.attenuation_level}</p>
           <p>Description: {beer.description}</p>
           <p>Created by: {beer.contributed_by}</p>
-
+            <Link to="/" >
           <button
             className="btn btn-primary"
             onClick={() => {
@@ -45,6 +60,7 @@ function BeerDetailsPage() {
           >
             Back
           </button>
+          </Link>
         </>
       )}
     </div>

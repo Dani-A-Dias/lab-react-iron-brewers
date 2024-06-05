@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import beersJSON from "./../assets/beers.json";
+import axios from 'axios';
 
 
 function RandomBeersPage() {
@@ -17,6 +18,22 @@ function RandomBeersPage() {
   // 2. Use axios to make a HTTP request.
   // 3. Use the response data from the Beers API to update the state variable.
 
+  useEffect(() => {
+		const fetchRandomBeer = async () => {
+			try {
+				const { data } = await axios.get(
+					`https://ih-beers-api2.herokuapp.com/beers/random`
+				);
+				setRandomBeer(data);
+				console.log(data);
+			} catch (error) {
+				console.log(error);
+			}
+		};
+		fetchRandomBeer();
+	}, []);
+
+
 
 
   // The logic and the structure for the page showing the random beer. You can leave this as it is.
@@ -27,7 +44,7 @@ function RandomBeersPage() {
       {randomBeer && (
         <>
           <img
-            src={randomBeer.image_url}
+            src={"https://assets.untappd.com/photos/2023_09_30/c39031e596c4107e4821139045f0b12b_640x640.jpg"}
             alt="beer"
             height="300px"
             width="auto"
@@ -37,7 +54,7 @@ function RandomBeersPage() {
           <p>Attenuation level: {randomBeer.attenuation_level}</p>
           <p>Description: {randomBeer.description}</p>
           <p>Created by: {randomBeer.contributed_by}</p>
-
+          <Link to="/">
           <button
             className="btn btn-primary"
             onClick={() => {
@@ -46,6 +63,7 @@ function RandomBeersPage() {
           >
             Back
           </button>
+          </Link>
         </>
       )}
     </div>
